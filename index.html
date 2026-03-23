@@ -3,385 +3,868 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Support — Ringtone Studio</title>
+  <title>Ringtone Studio — Your Music, Your Ringtone</title>
+  <meta name="description" content="Turn any MP3 into a custom iPhone ringtone in seconds. Trim, fade, preview — then set it directly. Free, no account needed.">
+  <meta property="og:title" content="Ringtone Studio">
+  <meta property="og:description" content="Turn any MP3 into a custom iPhone ringtone in seconds.">
+  <meta property="og:image" content="img/01_import.png">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-      background: #07070E;
-      color: #fff;
-      min-height: 100vh;
+    :root {
+      --accent:       #7C3BED;
+      --accent-mid:   #8B5CF6;
+      --accent-light: #A78BFA;
+      --bg:           #07070E;
+      --bg2:          #0C0B1A;
+      --text:         #fff;
+      --muted:        rgba(255,255,255,0.42);
+      --border:       rgba(255,255,255,0.07);
     }
 
-    /* NAV */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, 'SF Pro Display', BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
     nav {
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      background: rgba(7,7,14,0.92);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(7,7,14,0.80);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
     }
 
     .nav-icon {
-      width: 36px; height: 36px;
+      width: 34px; height: 34px;
       background: linear-gradient(135deg, #7C3BED, #5B1DB8);
       border-radius: 9px;
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(124,59,237,0.4);
     }
 
-    .nav-icon svg { width: 20px; height: 20px; }
-
-    .nav-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
+    .nav-name {
+      font-size: 16px; font-weight: 700; color: #fff;
+      letter-spacing: -0.2px;
     }
 
-    /* HERO */
+    .nav-links {
+      display: flex; align-items: center; gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.48);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: #fff; }
+
+    .nav-cta {
+      display: flex; align-items: center; gap: 7px;
+      background: linear-gradient(135deg, #7C3BED, #5B1DB8);
+      color: #fff !important;
+      padding: 9px 18px;
+      border-radius: 22px;
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      box-shadow: 0 4px 14px rgba(124,59,237,0.35);
+      transition: opacity .2s !important;
+    }
+    .nav-cta:hover { opacity: .85; color: #fff !important; }
+
+    /* ─── HERO ─── */
     .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       text-align: center;
-      padding: 72px 24px 56px;
+      padding: 120px 24px 80px;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute; top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 700px;
+      background: radial-gradient(ellipse, rgba(124,59,237,0.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-glow2 {
+      position: absolute; bottom: -100px; left: -200px;
+      width: 600px; height: 500px;
+      background: radial-gradient(ellipse, rgba(90,30,200,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      color: rgba(167,139,250,0.75);
+      background: rgba(124,59,237,0.10);
+      border: 1px solid rgba(124,59,237,0.22);
+      padding: 6px 14px; border-radius: 20px;
+      margin-bottom: 28px;
+    }
+
+    .hero-badge span {
+      width: 6px; height: 6px;
+      background: #A78BFA; border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.85); }
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.0;
+      margin-bottom: 22px;
+      background: linear-gradient(145deg, #ffffff 0%, #e2d4ff 50%, #b89af8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: clamp(17px, 2.5vw, 21px);
+      color: rgba(255,255,255,0.40);
+      max-width: 520px; line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; gap: 14px;
+      flex-wrap: wrap; justify-content: center;
+      margin-bottom: 70px;
+    }
+
+    .btn-appstore {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff;
+      color: #000;
+      padding: 14px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-size: 15px; font-weight: 700;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: -0.2px;
+    }
+
+    .btn-appstore:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    }
+
+    .btn-appstore-inner { display: flex; flex-direction: column; }
+    .btn-appstore-sub { font-size: 10px; font-weight: 500; opacity: .55; line-height: 1; margin-bottom: 1px; }
+    .btn-appstore-main { font-size: 16px; font-weight: 700; line-height: 1.2; }
+
+    .btn-ghost {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.55);
+      font-size: 15px; font-weight: 600;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      transition: color .2s, border-color .2s;
+    }
+
+    .btn-ghost:hover { color: #fff; border-color: rgba(255,255,255,0.22); }
+
+    /* Hero phone mockup */
+    .hero-phone-wrap {
+      position: relative;
+      display: flex; justify-content: center; align-items: flex-end;
+      gap: 24px;
+    }
+
+    .hero-phone {
+      position: relative;
+      width: 220px;
+      flex-shrink: 0;
+    }
+
+    .hero-phone.center {
+      width: 256px;
+      z-index: 2;
+    }
+
+    .hero-phone.side {
+      opacity: 0.55;
+      transform: scale(0.90) translateY(40px);
+      filter: blur(1px);
+    }
+
+    .phone-frame {
+      width: 100%;
+      background: linear-gradient(160deg, #2C2C2C, #111);
+      border-radius: calc(50px * var(--scale, 1));
+      padding: 4px;
+      box-shadow:
+        0 0 0 .5px rgba(255,255,255,0.10),
+        0 40px 80px rgba(0,0,0,0.70),
+        0 16px 40px rgba(124,59,237,0.15);
+    }
+
+    .hero-phone.center .phone-frame {
+      --scale: 1;
+      border-radius: 46px;
+      box-shadow:
+        0 0 0 .5px rgba(255,255,255,0.11),
+        0 60px 120px rgba(0,0,0,0.75),
+        0 24px 60px rgba(124,59,237,0.22);
+    }
+
+    .hero-phone.side .phone-frame {
+      border-radius: 40px;
+    }
+
+    .phone-screen-img {
+      width: 100%;
+      border-radius: 42px;
+      display: block;
+    }
+
+    .hero-phone.side .phone-screen-img {
+      border-radius: 37px;
+    }
+
+    /* phone glow */
+    .hero-phone.center::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 10%; right: 10%; height: 80px;
+      background: radial-gradient(ellipse, rgba(124,59,237,0.45) 0%, transparent 70%);
+      filter: blur(20px);
+      z-index: -1;
+    }
+
+    /* ─── STATS ─── */
+    .stats {
+      padding: 0 24px 80px;
+      display: flex; justify-content: center;
+    }
+
+    .stats-inner {
+      display: flex; gap: 0;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .stat {
+      flex: 1; text-align: center;
+      padding: 24px 20px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-value {
+      font-size: 28px; font-weight: 800;
+      background: linear-gradient(135deg, #fff, #C4B5FD);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .stat-label {
+      font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.35);
+      margin-top: 4px;
+    }
+
+    /* ─── SECTION SHARED ─── */
+    section {
+      padding: 100px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: rgba(167,139,250,0.65);
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1px; line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.40);
+      max-width: 520px; line-height: 1.65;
+    }
+
+    /* fade-in animation */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── FEATURES ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 56px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 22px;
+      padding: 30px 28px;
+      transition: border-color .25s, background .25s;
+    }
+
+    .feature-card:hover {
+      background: rgba(124,59,237,0.06);
+      border-color: rgba(124,59,237,0.22);
+    }
+
+    .feature-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: rgba(124,59,237,0.14);
+      border: 1px solid rgba(124,59,237,0.22);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .feature-title {
+      font-size: 18px; font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .feature-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.65;
+    }
+
+    /* ─── SCREENSHOTS ─── */
+    .screenshots-section {
+      max-width: 100%;
+      padding: 100px 0;
+      overflow: hidden;
+    }
+
+    .screenshots-header {
+      max-width: 1100px;
+      margin: 0 auto 52px;
+      padding: 0 40px;
+    }
+
+    .screenshots-track {
+      display: flex;
+      gap: 20px;
+      padding: 20px 40px 40px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      justify-content: safe center;
+    }
+
+    .screenshots-track::-webkit-scrollbar { display: none; }
+
+    .ss-phone {
+      flex-shrink: 0;
+      width: 220px;
+      scroll-snap-align: center;
+    }
+
+    .ss-frame {
+      background: linear-gradient(160deg, #2C2C2C, #111);
+      border-radius: 44px;
+      padding: 4px;
+      box-shadow:
+        0 0 0 .5px rgba(255,255,255,0.09),
+        0 30px 70px rgba(0,0,0,0.65),
+        0 12px 30px rgba(124,59,237,0.12);
+      transition: transform .3s;
+    }
+
+    .ss-phone:hover .ss-frame { transform: translateY(-8px); }
+
+    .ss-img {
+      width: 100%;
+      border-radius: 40px;
+      display: block;
+    }
+
+    .ss-caption {
+      text-align: center;
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,0.32);
+      margin-top: 16px;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+      margin-top: 56px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .how-step {
+      background: var(--bg);
+      padding: 36px 30px;
+      position: relative;
+    }
+
+    .how-step-num {
+      font-size: 13px; font-weight: 700;
+      color: rgba(167,139,250,0.60);
+      background: rgba(124,59,237,0.12);
+      border: 1px solid rgba(124,59,237,0.22);
+      width: 32px; height: 32px;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .how-step-title {
+      font-size: 18px; font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .how-step-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.40);
+      line-height: 1.65;
+    }
+
+    /* ─── BIG CTA ─── */
+    .cta-section {
+      max-width: 100%;
+      padding: 80px 24px 120px;
+    }
+
+    .cta-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      background: linear-gradient(135deg,
+        rgba(124,59,237,0.18) 0%,
+        rgba(90,30,180,0.08) 50%,
+        rgba(124,59,237,0.12) 100%);
+      border: 1px solid rgba(124,59,237,0.25);
+      border-radius: 32px;
+      padding: 72px 48px;
+      text-align: center;
       position: relative;
       overflow: hidden;
     }
 
-    .hero::before {
+    .cta-inner::before {
       content: '';
-      position: absolute;
-      top: -100px; left: 50%;
+      position: absolute; top: -100px; left: 50%;
       transform: translateX(-50%);
       width: 600px; height: 400px;
-      background: radial-gradient(ellipse, rgba(124,59,237,0.22) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(124,59,237,0.20) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    .hero h1 {
-      font-size: clamp(32px, 6vw, 48px);
-      font-weight: 800;
-      letter-spacing: -0.8px;
-      line-height: 1.1;
-      background: linear-gradient(145deg, #fff 0%, #C4B5FD 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 14px;
-    }
-
-    .hero p {
-      font-size: 17px;
-      color: rgba(255,255,255,0.42);
-      max-width: 480px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* MAIN */
-    main {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
-    }
-
-    /* SECTION TITLE */
-    .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: rgba(167,139,250,0.7);
+    .cta-inner h2 {
+      font-size: clamp(30px, 5vw, 48px);
+      font-weight: 800; letter-spacing: -1px; line-height: 1.1;
       margin-bottom: 16px;
-      margin-top: 48px;
+      background: linear-gradient(145deg, #fff, #C4B5FD);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    /* FAQ */
-    .faq-item {
-      background: rgba(255,255,255,0.038);
-      border: 1px solid rgba(255,255,255,0.068);
-      border-radius: 16px;
-      padding: 20px 22px;
-      margin-bottom: 10px;
-    }
-
-    .faq-q {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .faq-q::before {
-      content: 'Q';
-      font-size: 10px;
-      font-weight: 700;
-      color: #A78BFA;
-      background: rgba(124,59,237,0.18);
-      border: 1px solid rgba(124,59,237,0.30);
-      border-radius: 6px;
-      padding: 2px 6px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .faq-a {
-      font-size: 15px;
-      color: rgba(255,255,255,0.52);
-      line-height: 1.65;
-      padding-left: 28px;
-    }
-
-    .faq-a ol, .faq-a ul {
-      padding-left: 18px;
-      margin-top: 6px;
-    }
-
-    .faq-a li {
-      margin-bottom: 4px;
-    }
-
-    /* HOW TO STEPS */
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .step {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      background: rgba(255,255,255,0.032);
-      border: 1px solid rgba(255,255,255,0.058);
-      border-radius: 14px;
-      padding: 16px 18px;
-    }
-
-    .step-num {
-      width: 28px; height: 28px;
-      border-radius: 14px;
-      background: rgba(124,59,237,0.18);
-      border: 1.5px solid rgba(124,59,237,0.38);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #A78BFA;
-      flex-shrink: 0;
-    }
-
-    .step-text { flex: 1; }
-
-    .step-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 3px;
-    }
-
-    .step-desc {
-      font-size: 13px;
+    .cta-inner p {
+      font-size: 18px;
       color: rgba(255,255,255,0.40);
-      line-height: 1.5;
-    }
-
-    /* CONTACT */
-    .contact-card {
-      background: rgba(124,59,237,0.08);
-      border: 1px solid rgba(124,59,237,0.22);
-      border-radius: 18px;
-      padding: 28px 24px;
-      text-align: center;
-    }
-
-    .contact-card h3 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .contact-card p {
-      font-size: 15px;
-      color: rgba(255,255,255,0.42);
-      margin-bottom: 20px;
+      margin-bottom: 36px;
       line-height: 1.6;
     }
 
-    .contact-btn {
-      display: inline-flex;
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 40px 40px 32px;
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      background: linear-gradient(135deg, #7C3BED, #5B1DB8);
-      border-radius: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #fff;
-      text-decoration: none;
-      box-shadow: 0 8px 24px rgba(124,59,237,0.40);
-      border: 1px solid rgba(255,255,255,0.10);
-      transition: opacity 0.15s;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
-    .contact-btn:hover { opacity: 0.85; }
+    .footer-brand {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 15px; font-weight: 600;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+    }
 
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 24px;
+    .footer-links {
+      display: flex; gap: 24px; flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 14px; color: rgba(255,255,255,0.32);
+      text-decoration: none; transition: color .2s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.65); }
+
+    .footer-copy {
       font-size: 13px;
       color: rgba(255,255,255,0.18);
-      border-top: 1px solid rgba(255,255,255,0.05);
+      width: 100%;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
     }
 
-    footer a {
-      color: rgba(167,139,250,0.55);
-      text-decoration: none;
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-phone.side { display: none; }
+      section { padding: 64px 20px; }
+      .screenshots-track { padding: 20px 30px 40px; }
+      .cta-inner { padding: 48px 24px; }
+      footer { padding: 32px 20px; }
     }
-
-    footer a:hover { color: #A78BFA; }
   </style>
 </head>
 <body>
 
+  <!-- ─── NAV ─── -->
   <nav>
-    <div class="nav-icon">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9 19V6l12-3v13" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="6" cy="19" r="3" stroke="white" stroke-width="1.8"/>
-        <circle cx="18" cy="16" r="3" stroke="white" stroke-width="1.8"/>
-      </svg>
-    </div>
-    <span class="nav-title">Ringtone Studio</span>
+    <a href="#" class="nav-brand">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 2C5.6 2 2 5.6 2 10s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8z" fill="rgba(255,255,255,0.1)"/>
+          <circle cx="10" cy="10" r="2.5" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="10" cy="10" r="1" fill="white"/>
+          <path d="M12.5 7.5V4.5l3.5-.8V6" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="nav-name">Ringtone Studio</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#screenshots">Screenshots</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#" class="nav-cta">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 3H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z" stroke="white" stroke-width="1.3"/><path d="M5 7l2 2 2-2M7 4v5" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Download Free
+      </a></li>
+    </ul>
   </nav>
 
+  <!-- ─── HERO ─── -->
   <div class="hero">
-    <h1>How can we help?</h1>
-    <p>Find answers to common questions or get in touch — we're happy to help.</p>
-  </div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
 
-  <main>
-
-    <!-- HOW TO USE -->
-    <div class="section-title">How to use</div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">
-          <div class="step-title">Import your MP3</div>
-          <div class="step-desc">Tap "Choose MP3 File" and select any MP3 from your Files app.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">
-          <div class="step-title">Trim to 30 seconds</div>
-          <div class="step-desc">Drag the handles on the waveform to select your clip. Pinch to zoom in for more precision. The Length chip shows your current selection duration.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">
-          <div class="step-title">Preview & adjust</div>
-          <div class="step-desc">Tap Preview to hear your selection. Enable the Loop button to keep it playing while you fine-tune. Adjust the Fade slider for smooth transitions.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text">
-          <div class="step-title">Tap "Trim & Save"</div>
-          <div class="step-desc">The app will process and save your ringtone as an .m4r file.</div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-text">
-          <div class="step-title">Share → Use as Ringtone</div>
-          <div class="step-desc">Tap the Share button, then select "Use as Ringtone". Your iPhone will set it immediately.</div>
-        </div>
-      </div>
+    <div class="hero-badge fade-up visible">
+      <span></span> Available on App Store
     </div>
 
-    <!-- FAQ -->
-    <div class="section-title">Frequently asked questions</div>
+    <h1 class="fade-up visible">Every song has<br>that perfect moment.</h1>
 
-    <div class="faq-item">
-      <div class="faq-q">Why don't I see "Use as Ringtone" in the share sheet?</div>
-      <div class="faq-a">
-        The "Use as Ringtone" option only appears for <strong>.m4r</strong> files. Make sure you tapped
-        <em>Trim &amp; Save</em> first — this converts your MP3 to the correct ringtone format.
-        If you're sharing directly from History, it will also work correctly.
-      </div>
-    </div>
+    <p class="fade-up visible">
+      Turn any MP3 into a custom iPhone ringtone in seconds.
+      Trim, preview on loop, add fades — then set it straight from the app.
+    </p>
 
-    <div class="faq-item">
-      <div class="faq-q">My ringtone is longer than 30 seconds — will it work?</div>
-      <div class="faq-a">
-        iPhones support ringtones up to 30 seconds. The app allows you to trim up to 30 seconds and
-        shows a ✓ indicator when your selection is within the limit. We recommend keeping it at or under 30 seconds.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-q">The waveform is flat / not loading</div>
-      <div class="faq-a">
-        The waveform is generated from the audio file after import. If it appears flat:
-        <ol>
-          <li>Try tapping "Change" and re-importing the same file</li>
-          <li>Make sure the MP3 file is not corrupted</li>
-          <li>Check that the file is a valid MP3 format</li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-q">Can I import songs from Apple Music or Spotify?</div>
-      <div class="faq-a">
-        Songs from streaming services (Apple Music, Spotify) are DRM-protected and cannot be imported
-        or trimmed. You can only use MP3 files that are stored locally on your device in the Files app.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-q">Where are my saved ringtones stored?</div>
-      <div class="faq-a">
-        Saved ringtones appear in the <strong>History</strong> tab. From there you can re-share or
-        set any previously saved ringtone as your ringtone again at any time.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-q">Does the app work without an internet connection?</div>
-      <div class="faq-a">
-        Yes — Ringtone Studio works fully offline. All audio processing happens on your device.
-        No data is ever sent to a server.
-      </div>
-    </div>
-
-    <!-- CONTACT -->
-    <div class="section-title">Still need help?</div>
-    <div class="contact-card">
-      <h3>Get in touch</h3>
-      <p>Can't find the answer you're looking for?<br>Send us an email and we'll get back to you.</p>
-      <a class="contact-btn" href="mailto:martin.molik@icloud.com">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <rect x="1" y="3" width="14" height="10" rx="2" stroke="white" stroke-width="1.4"/>
-          <path d="M1 5l7 5 7-5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+    <div class="hero-actions fade-up visible">
+      <a href="#" class="btn-appstore">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M20.8 14.8c0-3.1 2.5-4.6 2.6-4.7-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-3.9-1-2 0-3.9 1.2-4.9 3-2.1 3.6-.5 9 1.5 12 1 1.5 2.2 3.1 3.7 3 1.5-.1 2-.9 3.8-.9 1.8 0 2.3.9 3.9.9 1.6 0 2.7-1.5 3.6-2.9.4-.6.7-1.3 1-1.9-.1-.1-3.3-1.3-3.3-4.2z" fill="#000"/>
+          <path d="M18 5.9c.8-1 1.4-2.4 1.2-3.9-1.2.1-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.6z" fill="#000"/>
         </svg>
-        martin.molik@icloud.com
+        <div class="btn-appstore-inner">
+          <span class="btn-appstore-sub">Download on the</span>
+          <span class="btn-appstore-main">App Store</span>
+        </div>
+      </a>
+      <a href="#how" class="btn-ghost">
+        See how it works
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
 
-  </main>
+    <!-- Phone mockups -->
+    <div class="hero-phone-wrap fade-up visible">
+      <div class="hero-phone side">
+        <div class="phone-frame">
+          <img class="phone-screen-img" src="img/01_import.png" alt="Import screen">
+        </div>
+      </div>
+      <div class="hero-phone center">
+        <div class="phone-frame">
+          <img class="phone-screen-img" src="img/02_waveform_trim.png" alt="Trim screen">
+        </div>
+      </div>
+      <div class="hero-phone side">
+        <div class="phone-frame">
+          <img class="phone-screen-img" src="img/04_share_ringtone.png" alt="Share screen">
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- ─── STATS ─── -->
+  <div class="stats fade-up">
+    <div class="stats-inner">
+      <div class="stat">
+        <div class="stat-value">30s</div>
+        <div class="stat-label">Max ringtone length</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">On-device processing</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">Free</div>
+        <div class="stat-label">No subscriptions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">4+</div>
+        <div class="stat-label">For all ages</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── FEATURES ─── -->
+  <section id="features">
+    <div class="fade-up">
+      <div class="section-eyebrow">Features</div>
+      <h2 class="section-title">Everything you need,<br>nothing you don't.</h2>
+      <p class="section-sub">Ringtone Studio is built around one goal — getting your song onto your phone as a ringtone, as fast as possible.</p>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M3 12h18M3 6h18M3 18h12" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="21" cy="18" r="2.5" stroke="#A78BFA" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <div class="feature-title">Real Waveform</div>
+        <div class="feature-desc">See the actual audio of your song — not a placeholder. Pinch to zoom in for frame-perfect trimming.</div>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="5" cy="6" r="2.5" stroke="#A78BFA" stroke-width="1.8"/>
+            <circle cx="5" cy="18" r="2.5" stroke="#A78BFA" stroke-width="1.8"/>
+            <path d="M7.5 7.5L20 13M7.5 16.5L20 11" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Precision Trimming</div>
+        <div class="feature-desc">Drag the selection handles to pick any 30-second clip. The length chip updates in real time as you adjust.</div>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M2 10a7 7 0 0 1 12-4.9M22 14a7 7 0 0 1-12 4.9" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M16 5l2 2-2 2M8 17l-2 2 2 2" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Loop Preview</div>
+        <div class="feature-desc">Play your selection on a continuous loop while you adjust handles. Hear every change instantly.</div>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2v20M8 5v14M4 8v8M16 4v16M20 7v10" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Smooth Fades</div>
+        <div class="feature-desc">One slider controls fade in and fade out simultaneously. No technical knowledge needed.</div>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M12 3v4M12 17v4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M3 12h4M17 12h4M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Normalize Volume</div>
+        <div class="feature-desc">Boost quiet recordings automatically so your ringtone sounds great on the first ring.</div>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="#A78BFA" stroke-width="1.8"/>
+            <path d="M12 7v5.5l3.5 2" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Ringtone History</div>
+        <div class="feature-desc">Every saved ringtone stays in your History tab — ready to re-share or set again anytime.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── SCREENSHOTS ─── -->
+  <div class="screenshots-section" id="screenshots">
+    <div class="screenshots-header fade-up">
+      <div class="section-eyebrow">Screenshots</div>
+      <h2 class="section-title">Simple by design.</h2>
+      <p class="section-sub">Every screen is built around the task at hand — no clutter, no learning curve.</p>
+    </div>
+
+    <div class="screenshots-track">
+      <div class="ss-phone">
+        <div class="ss-frame"><img class="ss-img" src="img/01_import.png" alt="Import screen"></div>
+        <div class="ss-caption">Import</div>
+      </div>
+      <div class="ss-phone">
+        <div class="ss-frame"><img class="ss-img" src="img/02_waveform_trim.png" alt="Trim screen"></div>
+        <div class="ss-caption">Trim</div>
+      </div>
+      <div class="ss-phone">
+        <div class="ss-frame"><img class="ss-img" src="img/03_loop_preview.png" alt="Loop preview"></div>
+        <div class="ss-caption">Preview</div>
+      </div>
+      <div class="ss-phone">
+        <div class="ss-frame"><img class="ss-img" src="img/04_share_ringtone.png" alt="Share screen"></div>
+        <div class="ss-caption">Share</div>
+      </div>
+      <div class="ss-phone">
+        <div class="ss-frame"><img class="ss-img" src="img/05_history.png" alt="History screen"></div>
+        <div class="ss-caption">History</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── HOW IT WORKS ─── -->
+  <section id="how">
+    <div class="fade-up">
+      <div class="section-eyebrow">How it works</div>
+      <h2 class="section-title">From song to ringtone<br>in under a minute.</h2>
+    </div>
+
+    <div class="steps-grid fade-up">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <div class="how-step-title">Import your MP3</div>
+        <div class="how-step-desc">Tap "Choose MP3 File" and pick any track from your Files app.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <div class="how-step-title">Trim to 30 seconds</div>
+        <div class="how-step-desc">Drag the waveform handles to select your perfect clip. Pinch to zoom for precision.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <div class="how-step-title">Preview on loop</div>
+        <div class="how-step-desc">Hit Preview and enable loop. Adjust until it sounds exactly right.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <div class="how-step-title">Save &amp; set</div>
+        <div class="how-step-desc">Tap Trim &amp; Save, then Share → Use as Ringtone. Done.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <div class="cta-section">
+    <div class="cta-inner fade-up">
+      <h2>Make your phone<br>sound like you.</h2>
+      <p>Free download. No account. No subscriptions.<br>Just your music, trimmed to perfection.</p>
+      <a href="#" class="btn-appstore" style="display:inline-flex;">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M20.8 14.8c0-3.1 2.5-4.6 2.6-4.7-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-3.9-1-2 0-3.9 1.2-4.9 3-2.1 3.6-.5 9 1.5 12 1 1.5 2.2 3.1 3.7 3 1.5-.1 2-.9 3.8-.9 1.8 0 2.3.9 3.9.9 1.6 0 2.7-1.5 3.6-2.9.4-.6.7-1.3 1-1.9-.1-.1-3.3-1.3-3.3-4.2z" fill="#000"/>
+          <path d="M18 5.9c.8-1 1.4-2.4 1.2-3.9-1.2.1-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.6z" fill="#000"/>
+        </svg>
+        <div class="btn-appstore-inner">
+          <span class="btn-appstore-sub">Download on the</span>
+          <span class="btn-appstore-main">App Store</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ─── FOOTER ─── -->
   <footer>
-    <p>© 2025 Martin Molík · <a href="../index.html">Privacy Policy</a></p>
+    <a href="#" class="footer-brand">
+      <div class="nav-icon" style="width:28px;height:28px;border-radius:7px;">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="2.5" fill="rgba(255,255,255,0.6)"/>
+          <circle cx="10" cy="10" r="1" fill="white"/>
+          <path d="M12.5 7.5V4.5l3.5-.8V6" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      Ringtone Studio
+    </a>
+    <div class="footer-links">
+      <a href="../support/index.html">Support</a>
+      <a href="../index.md">Privacy Policy</a>
+      <a href="mailto:martin.molik@icloud.com">Contact</a>
+    </div>
+    <div class="footer-copy">© 2025 Martin Molík. All rights reserved.</div>
   </footer>
+
+  <script>
+    // Fade-in on scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-up:not(.visible)').forEach(el => observer.observe(el));
+  </script>
 
 </body>
 </html>
